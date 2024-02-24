@@ -1,0 +1,157 @@
+nav{
+    width: 100vw;
+    background-color: rgb(45, 139, 10);
+    height: 60px;
+    text-align: right;
+    display: flex;
+    justify-content: end;
+    z-index: 1;
+}
+
+li{
+    display: inline;
+    margin-right: 80px;
+    padding-top: 50px;
+}
+
+a{
+    color: white;
+    font-size: x-large;
+    font: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    vertical-align: middle;
+
+}
+
+#chess_box{
+    width: 650px;
+    height: 650px;
+    background-color: rgb(210, 210, 210);
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 30px;
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+.white{
+    background-color: rgb(242, 240, 240);
+    width: 77px;
+    height: 77px;
+    display: inline-block;
+}
+
+.black{
+    background-color: rgb(18, 111, 1);
+    width: 77px;
+    height: 77px;
+    display: inline-block;
+}
+
+#row{
+    display: inline-block;
+}
+
+img{
+    height: 77px;
+    width:77px;
+}
+
+#wking {
+    height: 100%;
+    clip-path: inset(13px 0 0 0);
+}
+
+#bking {
+    height: 100%;
+    clip-path: inset(13px 0 0 0);
+}
+
+#ul{
+    margin-left: 50%;
+    margin-right: auto;
+}
+
+#black_pick{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#pls_pick{
+    text-align: center;
+    font-size: 30px;
+}
+
+ul{
+    text-align: center;
+}
+
+#wrong_move{
+    font-size: 30px;
+    position: absolute;
+    top: 50%; 
+    left: 5%;
+}
+
+#king_dead{
+    width: 100vw;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 40%;
+}
+
+
+
+#input{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+#par{
+    margin-top: 20vw;
+    text-align: center;
+}
+#username{
+    padding-top: 1vw;
+    /* width: 15%; */
+    height: 25px;
+}
+
+#submit{
+    margin-top: 1vw;
+    width: 10%;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+#loading{
+    width:700px;
+    height: 700px;
+    background-color: white;
+    margin-right: auto;
+    margin-left: 25vw;
+    margin-top: 0vw;
+    z-index: 2;
+    position: absolute;
+}
+#names{
+    display: flex;
+    flex-direction: row;
+}
+#oppname{
+    align-self: flex-start;
+    text-align: right;
+    font-size: larger;
+    margin-left: 80%;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+#urname{
+    font-size: larger;
+    text-align: left;
+    font-family:Arial, Helvetica, sans-serif;
+}

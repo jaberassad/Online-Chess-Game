@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <%- include("./partials/head.ejs") %>
+
+    <body>
+
+        <%- include("./partials/nav.ejs") %>
+
+        <div id="names">
+            <p id="urname"></p>
+            <p id="oppname"></p>
+        </div>
+        <p id="turn"></p>
+        <div id="loading">
+            <p id="par">Please Enter your name below</p>
+            <div id="input">
+                <textarea name="username" id="username"></textarea>
+                <button type="submit" id="submit">Play</button>
+            </div>
+        </div>
+        <div id="wrong_move"></div>
+        <div id="king_dead"></div>
+        <div id="white_pick"></div>
+        <div id="chess_box">
+            <% for(let j=0; j<=7; j++){ 
+                if(j%2===0){ %>
+                    <div id="rows">
+                        <% for(let i=0; i<=7; i++) { 
+                            let coords = String(i)+String(j);
+                             if(i % 2 === 0) {%>
+                                <div class="white" id="<%= coords %>"></div>
+                            <%} else { %>
+                                <div class="black" id="<%= coords %>"></div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                <% } else {%>
+                    <div id="rows">
+                        <% for(let i=0; i<=7; i++) { 
+                            let coords = String(i)+String(j);
+                             if(i % 2 === 0) { %>
+                                <div class="black" id="<%= coords %>"></div>
+                            <% } else { %>
+                                <div class="white" id="<%= coords %>"></div>
+                            <% } %>
+                        <% } %>
+                    </div>
+            <% }} %>
+        </div>
+
+        <div id="black_pick"></div>
+    </body>
+
+    <script src="./game.js"></script>
+</html>
