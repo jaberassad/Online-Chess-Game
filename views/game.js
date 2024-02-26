@@ -624,6 +624,9 @@ bknight2.placing("60");
 let chess_box = document.getElementById("chess_box");
 chess_box.style.display="none";
 
+let num_piece = "1";
+
+
 chess_box.addEventListener("click", function firstclick(event){
     let clicked_element = event.target;
     let current_position= clicked_element.id;
@@ -714,10 +717,25 @@ chess_box.addEventListener("click", function firstclick(event){
 
                 pickdiv.addEventListener("click", (event)=>{
                     let clicked_img = event.target;
-
-                    console.log(clicked_img.id)
-                    let piece2 = pieceMap.get(clicked_img.id)
-                    console.log(piece2)
+                    
+                    let piece2;
+                    
+                    if(clicked_img.id.substring(0,7)=="wbishop"){
+                        piece2 = new Bishop("Bishop", "white", `wbishop1${num_piece}`);
+                        pieceMap.set(`wbishop1${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,6)=="wqueen"){
+                        piece2 = new Queen("Queen", "white", `wqueen${num_piece}`);
+                        pieceMap.set(`wqueen${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,5)=="wrook"){
+                        piece2 = new Rook("Rook", "white", `wrook${num_piece}`);
+                        pieceMap.set(`wrook${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,7)=="wknight"){
+                        piece2 = new Knight("Knight", "white", `wknight${num_piece}`);
+                        pieceMap.set(`wknight${num_piece}`, piece2);
+                    }
                     pickdiv.innerHTML="";
                     piece2.placing(coords);
                 })
@@ -726,15 +744,36 @@ chess_box.addEventListener("click", function firstclick(event){
             }
             else if(piece.get_color()=="black" && coords[1]=="7" && piece.get_type()=="Pawn" && piece.legitmove(current_position, coords)){
                 let pickdiv = document.getElementById("black_pick");
-                pickdiv.innerHTML='<p id="pls_pick"> Please pick a piece</p><ul><li><img id="bbishop1" src="statics/blackbishop.png"></li><li><img id="bqueen" src="statics/blackqueen.png"></li><li><img id="brook1" src="statics/blackrook.png"></li><li><img id="bknight1" src="statics/blackknight.png"></li></ul>'
+                num_piece+="1"
+                pickdiv.innerHTML=`<p id="pls_pick"> Please pick a piece</p><ul><li><img id="bbishop1${num_piece}" src="statics/blackbishop.png"></li><li><img id="bqueen" src="statics/blackqueen.png"></li><li><img id="brook1" src="statics/blackrook.png"></li><li><img id="bknight1" src="statics/blackknight.png"></li></ul>`
                 pickdiv.addEventListener("click", (event)=>{
                     let clicked_img = event.target;
-
-                    console.log(clicked_img.id)
-                    let piece2 = pieceMap.get(clicked_img.id)
-                    console.log(piece2)
+                    let piece2;
+                    
+                    if(clicked_img.id.substring(0,7)=="bbishop"){
+                        console.log(true);
+                        piece2 = new Bishop("Bishop", "black", `bbishop1${num_piece}`);
+                        pieceMap.set(`bbishop1${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,6)=="bqueen"){
+                        console.log(true);
+                        piece2 = new Queen("Queen", "black", `bqueen${num_piece}`);
+                        pieceMap.set(`bqueen${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,5)=="brook"){
+                        console.log(true);
+                        piece2 = new Rook("Rook", "black", `brook${num_piece}`);
+                        pieceMap.set(`brook${num_piece}`, piece2);
+                    }
+                    else if(clicked_img.id.substring(0,7)=="bknight"){
+                        console.log(true);
+                        piece2 = new Knight("Knight", "black", `bknight${num_piece}`);
+                        pieceMap.set(`bknight${num_piece}`, piece2);
+                    }
+                    
                     pickdiv.innerHTML="";
                     piece2.placing(coords);
+                    console.log(piece2);
                 })
             }
 
@@ -743,7 +782,6 @@ chess_box.addEventListener("click", function firstclick(event){
             }
             else if(current_position==coords || piece.legitmove(current_position, coords)){
                 displayMessage('Illegal Move', 3000);
-                console.log("not legit");
                 chess_box.removeEventListener("click", secondclick);
                 chess_box.addEventListener("click", firstclick);
                 return;
@@ -821,7 +859,6 @@ function displayMessage(message, duration) {
 socket.on("place",(data)=>{
     const {current_position, coords, piece} = data;
     let piece2 = pieceMap.get(piece.id);
-    console.log(piece.color);
     let div = document.getElementById(piece.current_position);
     div.innerHTML="";
     piece2.placing(coords)
@@ -847,7 +884,7 @@ let data;
 btn.addEventListener("click", ()=>{
     let name= text.value;
     socket.emit("name", name);
-})
+}, {once:true})
 
 socket.on("find", (playingArray1)=>{
 
@@ -870,9 +907,7 @@ socket.on("find", (playingArray1)=>{
         oppname = playingArray.p1.pname;
         playercolor = playingArray.p1.pvalue;   
     }
-    console.log(player)
     data = { value, oppname, player };
-    console.log(data)
 
     if(data.player == "player1"){
         color = "White";
@@ -885,7 +920,6 @@ socket.on("find", (playingArray1)=>{
 
     div10.style.display="none";
     chess_box.style.display="block";
-    console.log(chess_box.style.display);
     let div11= document.getElementById("urname");
     div11.innerHTML=`${color} player (You): ${data.value}`;
 
