@@ -1,492 +1,11 @@
-
+import King from "../classes/king.js"
+import Queen from "../classes/queen.js"
+import Bishop from "../classes/bishop.js"
+import Knight from "../classes/knight.js"
+import Rook from "../classes/rook.js"
+import Pawn from "./classes/pawn.js"
 
 const socket = io();
-
-
-
-class Piece{
-    constructor(type, color, id){
-        this.type = type;
-        this.color = color;
-        this.id= id;
-        this.current_position= null;
-    }
-
-    get_type(){
-        return this.type;
-    }
-
-    get_color(){
-        return this.color;
-    }
-
-    get_id(){
-        return this.id
-    }
-
-    set_current_position(a){
-        this.current_position = a;
-    }
-
-    get_current_position(){
-        return this.current_position;
-    }
-
-    empty_square(a){
-        let div = document.getElementById(a);
-        if(div.innerHTML==""){
-            return true;
-        }
-
-        return false;
-    }
-}
-
-class Pawn extends Piece{
-    constructor(type, color, id){
-        super(type, color, id);
-    }
-
-    placing(i0){
-        let box= document.getElementById(i0);
-        if(this.color=="white"){
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whitepawn.png">`; 
-        }
-        else{
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackpawn.png">`;
-        }
-        
-    }
-
-    legitmove(i0, i1){
-
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-        if(y2==y1+1 && x2==x1 && document.getElementById(i1).innerHTML!="" && this.color=="black"){
-            return false;
-        }
-        else if(y2==y1-1 && x2==x1 && document.getElementById(i1).innerHTML!="" && this.color=="white"){
-            return false;
-        }
-
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1=="b" && color2=="w" && x2==x1+1 && y2==y1+1){
-                return true;
-            }
-            else if(color1=="b" && color2=="w" && x2==x1-1 && y2==y1+1){
-                return true;
-            }
-            else if(color1=="w" && color2=="b" && x2==x1+1 && y2==y1-1){
-                return true;
-            }
-            else if(color1=="w" && color2=="b" && x2==x1-1 && y2==y1-1){
-                return true;
-            }
-        }
-    
-
-        if(y2==y1+1 && x2==x1 && this.color=="black"){
-            return true;
-        }
-        else if(y2==y1-1 && x2==x1 && this.color=="white"){
-            return true;
-        }
-        else if(y1==1 && y2==y1+2 && this.color=="black" && x1==x2){
-            return true;
-        }
-        else if(y1==6 && y2==y1-2 && this.color=="white" && x1==x2){
-            return true;
-        }
-        return false;
-    }
-
-}
-
-class Rook extends Piece{
-    constructor(type, color, id){
-        super(type, color, id);
-    }
-    
-    placing(i0){
-        let box= document.getElementById(i0);
-        if(this.color=="white"){
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whiterook.png">`; 
-        }
-        else{
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackrook.png">`;
-        }
-        
-    }
-
-    legitmove(i0,i1){
-
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1==color2){
-                return false;
-            }
-        }
-
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-        let deltaX = (x2>x1) ? 1:-1;
-        let deltaY = (y2>y1) ? 1:-1;
-
-        let i=y1+deltaY;
-        let j=x1+deltaX;
-
-        if(y1!=y2){
-            while(i!=y2){
-                if(!this.empty_square(String(x1)+String(i))){
-                    return false;
-                }
-                i+=deltaY;
-            }
-        }
-
-        if(x1!=x2){
-            while(j!=x2){
-                if(!this.empty_square(String(j)+String(y1))){
-                    return false;
-                }
-                j+=deltaX;
-            }
-        }
-
-        if(y1==y2 && x1==x2){
-            return false;
-        }
-        else if(y1==y2 || x1==x2){
-            return true;
-        }
-
-        return false;
-    }
-
-}
-
-class King extends Piece{
-    constructor(type, color, id){
-        super(type, color, id);
-        this.current_position= null;
-    }
-
-    placing(i0, j0){
-        let box= document.getElementById(i0,j0);
-        if(this.color=="white"){
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whiteking.png">`;
-        }
-        else{
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackking.png">`;
-        }
-        
-    }
-
-    legitmove(i0, i1){
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1==color2){
-                return false;
-            }
-        }
-
-        if(x2==x1+1 && y1==y2){
-            return true;
-        }
-        else if(x2==x1+1 && y2==y1+1){
-            return true;
-        }
-        else if(x2==x1+1 && y2==y1-1){
-            return true;
-        }
-        else if(x2==x1+1 && y1==y2){
-            return true;
-        }
-        else if(x2==x1 && y2==y1+1){
-            return true;
-        }
-        else if(x2==x1 && y2==y1-1){
-            return true;
-        }
-        else if(x2==x1-1 && y2==y1+1){
-            return true;
-        }
-        else if(x2==x1-1 && y2==y1-1){
-            return true;
-        }
-        else if(x2==x1-1 && y1==y2){
-            return true;
-        }
-
-        return false;
-    }
-}
-
-class Bishop extends Piece{
-    constructor(type, color, id){
-        super(type, color, id);
-        this.current_position= null;
-    }
-
-    placing(i0, j0){
-        let box= document.getElementById(i0,j0);
-        if(this.color=="white"){
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whitebishop.png">`;
-        }
-        else{
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackbishop.png">`;
-        }
-        
-    }
-
-    legitmove(i0, i1){
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-        
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1==color2){
-                return false;
-            }
-        }
-
-        let deltaX = (x2>x1) ? 1:-1;
-        let deltaY = (y2>y1) ? 1:-1;
-
-        let i=y1+deltaY;
-        let j=x1+deltaX;
-
-        if(Math.abs(x1-x2)==Math.abs(y1-y2))
-
-        while(j!=x2){
-            while(i!=y2){
-                if(!this.empty_square(String(j)+String(i))){
-                    return false;
-                }
-                else{
-                    i+=deltaY;
-                    j+=deltaX;
-                }
-            }
-        }
-
-        if (Math.abs(y2-y1)==Math.abs(x2-x1)){
-            return true;
-        }
-        return false;
-    }
-}
-
-class Knight extends Piece{
-    constructor(type, color, id){
-        super(type, color, id);
-        this.current_position= null;
-    }
-
-    placing(i0, j0){
-        let box= document.getElementById(i0,j0);
-        if(this.color=="white"){
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whiteknight.png">`;
-        }
-        else{
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackknight.png">`;
-        }
-        
-    }
-
-    legitmove(i0, i1){
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1==color2){
-                return false;
-            }
-        }
-
-        if(x2==x1+2 && y2==y1+1){
-            return true;
-        }
-        else if(x2==x1-2 && y2==y1+1){
-            return true;
-        }
-        else if(x2==x1+2 && y2==y1-1){
-            return true;
-        }
-        else if(x2==x1-2 && y2==y1-1){
-            return true;
-        }
-        else if(x2==x1+1 && y2==y1+2){
-            return true;
-        }
-        else if(x2==x1-1 && y2==y1+2){
-            return true;
-        }
-        else if(x2==x1+1 && y2==y1-2){
-            return true;
-        }
-        else if(x2==x1-1 && y2==y1-2){
-            return true;
-        }
-    }
-}
-
-class Queen extends Piece {
-    constructor(type, color, id) {
-        super(type, color, id);
-    }
-
-
-    placing(i0, j0) {
-        let box = document.getElementById(i0, j0);
-        if (this.color == "white") {
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/whitequeen.png">`;
-        } else {
-            this.set_current_position(i0);
-            box.innerHTML = `<img class="img" id="${this.id}" src="./statics/blackqueen.png">`;
-        }
-    }
-
-    legitmove(i0, i1){
-        let x1 = parseInt(i0[0]);
-        let y1 = parseInt(i0[1]);
-        let x2 = parseInt(i1[0]);
-        let y2 = parseInt(i1[1]);
-
-        if(x1!=x2 && y1!=y2 && Math.abs(x1-x2)!=Math.abs(y1-y2)){
-            return false;
-        }
-
-
-        if(document.getElementById(i1).innerHTML!=""){
-            let div1 = document.getElementById(i0);
-            let img1 = div1.firstChild;
-            let color1 = img1.id[0];
-
-            let div2 = document.getElementById(i1);
-            let img2 = div2.firstChild;
-            let color2 = img2.id[0];
-
-            if(color1==color2){
-                return false;
-            }
-        }
-
-        let deltaX = (x2>x1) ? 1:-1;
-        let deltaY = (y2>y1) ? 1:-1;
-        let i=y1+deltaY;
-        let j=x1+deltaX;
-
-        if(Math.abs(x1-x2)==Math.abs(y1-y2))
-            while(j!=x2){
-                while(i!=y2){
-                    if(!this.empty_square(String(j)+String(i))){
-                        return false;
-                    }
-                    else{
-                        i+=deltaY;
-                        j+=deltaX;
-                    }
-                }
-            }
-
-        let x=y1+deltaY;
-        let y=x1+deltaX;
-
-        if(y1!=y2 && x1==x2){
-            while(x!=y2){
-                if(!this.empty_square(String(x1)+String(x))){
-                    return false;
-                }
-                x+=deltaY;
-            }
-        }
-
-        if(x1!=x2 && y1==y2){
-            while(y!=x2){
-                if(!this.empty_square(String(y)+String(y1))){
-                    return false;
-                }
-                y+=deltaX;
-            }
-        }
-
-        if(y1==y2){
-            return true;
-        }
-
-        
-
-
-        return true;
-    }
-}
 
 const pieceMap = new Map();
 
@@ -619,22 +138,22 @@ let bknight2 = new Knight("Knight", "black", "bknight2");
 pieceMap.set("bknight2", bknight2);
 bknight2.placing("60");
 
-
-
 let chess_box = document.getElementById("chess_box");
 chess_box.style.display="none";
 
 let num_piece = "1";
 
-
+// controls the movement inside the chess box and places piece if move is valid
 chess_box.addEventListener("click", function firstclick(event){
     let clicked_element = event.target;
     let current_position= clicked_element.id;
 
     let div1 = clicked_element.parentNode;
     let piece;
+    console.log(document.getElementById("urname").innerHTML)
+    console.log(pieceMap.get(clicked_element.id).color)
 
-    if(clicked_element.tagName === "IMG"){
+    if(clicked_element.tagName === "IMG" && document.getElementById("urname").innerHTML.toLowerCase().includes(pieceMap.get(clicked_element.id).color)){
         clicked_element.style.backgroundColor = "rgb(165, 198, 250)";
         piece= pieceMap.get(clicked_element.id);
         current_position = piece.current_position;
@@ -695,6 +214,10 @@ chess_box.addEventListener("click", function firstclick(event){
                     return;
                 }
                 else if(turn25.innerHTML=="black player's turn" && piece.get_color()!="black"){
+                    chess_box.removeEventListener("click", secondclick);
+                    chess_box.addEventListener("click", firstclick);
+                    return;
+                }else if ((document.getElementById("urname").innerHTML.includes("White") && piece.color=="black") || (document.getElementById("urname").innerHTML.includes("Black") && piece.color=="white")){
                     chess_box.removeEventListener("click", secondclick);
                     chess_box.addEventListener("click", firstclick);
                     return;
@@ -813,6 +336,7 @@ function king_is_alive(){
     let white_alive= false;
     let black_alive= false;
     let id;
+    let num;
     for(let i=0; i<=7; i++){
         for(let j=0; j<=7; j++){
             num=String(i)+String(j);
@@ -884,6 +408,8 @@ let data;
 btn.addEventListener("click", ()=>{
     let name= text.value;
     socket.emit("name", name);
+    document.getElementById("input").innerHTML+='<p> searching for players </p>'
+    document.getElementById("input").innerHTML+='<img src="statics/ZKZg.gif">'
 }, {once:true})
 
 socket.on("find", (playingArray1)=>{
@@ -894,6 +420,7 @@ socket.on("find", (playingArray1)=>{
     let oppname;
     let playercolor;
     let player;
+    let color, oppcolor;
 
     if(name==playingArray.p1.pname){
         player = "player1";
